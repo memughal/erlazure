@@ -473,7 +473,7 @@ handle_call({create_container, Name, Options}, _From, State) ->
         {Code, Body} = execute_request(ServiceContext, ReqContext),
         case Code of
           ?http_created -> {reply, {ok, created}, State};
-          _ -> {reply, {error, Body}, State}
+          _ -> {reply, {Code, Body}, State}
         end;
 
 % Delete container
@@ -736,7 +736,7 @@ execute_request(ServiceContext = #service_context{}, ReqContext = #req_context{}
 
           {ok, {{_, _, _}, _, Body}} ->
             try get_error_code(Body) of
-              ErrorCodeAtom -> {ok, ErrorCodeAtom}
+              ErrorCodeAtom -> {error, ErrorCodeAtom}
               catch
                 _ -> {error, Body}
               end
